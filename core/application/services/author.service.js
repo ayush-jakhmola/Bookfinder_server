@@ -1,11 +1,20 @@
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 
 function AuthorService(datastore) {
   return {
-    getAuthorById: (id) => {
+    getAuthorById(id) {
       return datastore.findOne({ where: { id } });
     },
-    listAuthors: async ({ limit = 5, offset = 0, name, born_year }) => {
+
+    getAuthorByIds(ids) {
+      return datastore.findAll({
+        where: {
+          id: ids,
+        },
+      });
+    },
+
+    async listAuthors({ limit = 5, offset = 0, name, born_year }) {
       const where = {};
 
       if (name)
@@ -34,10 +43,12 @@ function AuthorService(datastore) {
         count,
       };
     },
-    addAuthor: (data) => {
+
+    addAuthor(data) {
       return datastore.create(data);
     },
-    updateAuthor: async (id, data) => {
+
+    async updateAuthor(id, data) {
       const [updated] = await datastore.update(data, {
         where: { id },
       });
@@ -46,7 +57,8 @@ function AuthorService(datastore) {
         return datastore.findOne({ where: { id } });
       }
     },
-    removeAuthor: async (id) => {
+
+    async removeAuthor(id) {
       const deleted = await datastore.destroy({
         where: { id },
       });

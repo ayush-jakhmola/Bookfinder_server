@@ -1,31 +1,28 @@
 const { Op } = require("sequelize");
 
-function BookService(datastore, Author) {
+function BookService(datastore) {
   return {
-    getBookById: (id) => {
+    getBookById(id) {
       return datastore.findOne({
         where: { id },
-        include: [
-          {
-            model: Author,
-            as: "author",
-            attributes: ["id", "name"],
-          },
-        ],
       });
     },
 
-    getBooksByAuthorId: (author_id) => {
+    getBooksByAuthorId(author_id) {
       return datastore.findAll({ where: { author_id } });
     },
 
-    getAllBooks: async ({
+    getBooksByAuthorIds(author_ids) {
+      return datastore.findAll({ where: { author_id: author_ids } });
+    },
+
+    async getAllBooks({
       limit = 5,
       offset = 0,
       title,
       published_date,
       author_name,
-    }) => {
+    }) {
       const where = {};
       if (title) where.title = { [Op.iLike]: `%${title}%` };
       if (published_date) where.published_date = published_date;
@@ -38,27 +35,17 @@ function BookService(datastore, Author) {
         where,
         limit,
         offset,
-        include: [
-          {
-            model: Author,
-            as: "author",
-            attributes: ["id", "name"],
-            ...(author_name && {
-              where: { name: { [Op.iLike]: `%${author_name}%` } },
-            }),
-          },
-        ],
         order: [["published_date", "ASC"]],
       });
 
       return { count, data };
     },
 
-    createBook: (data) => {
+    createBook(data) {
       return datastore.create(data);
     },
 
-    updateBook: async (id, data) => {
+    async updateBook(id, data) {
       const [updated] = await datastore.update(data, {
         where: { id },
       });
@@ -68,7 +55,7 @@ function BookService(datastore, Author) {
       }
     },
 
-    deleteBook: async (id) => {
+    async deleteBook(id) {
       const deleted = await datastore.destroy({
         where: { id },
       });

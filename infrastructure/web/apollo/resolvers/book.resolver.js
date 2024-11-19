@@ -1,10 +1,9 @@
 const {
   BookService,
 } = require("../../../../core/application/services/book.service");
-const { Author } = require("../../../database/postgre/models/author.model");
 const { Book } = require("../../../database/postgre/models/book.model");
 
-const bookService = BookService(Book, Author);
+const bookService = BookService(Book);
 
 module.exports = {
   Query: {

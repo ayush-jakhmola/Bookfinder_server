@@ -17,8 +17,9 @@ const Book = gql`
     title: String
     description: String
     author_id: Int
-    author: Author
     published_date: String
+    author: Author
+    reviews: [Review]
   }
   type ListBooks {
     data: [Book!]!
